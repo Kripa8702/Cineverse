@@ -1,44 +1,113 @@
 part of 'movies_cubit.dart';
 
+enum MovieType { popular, topRated, upcoming }
+
 enum MoviesStatus { loading, loadingNextPage, success, failure }
 
 class MoviesState extends Equatable {
   const MoviesState({
-    this.status = MoviesStatus.loading,
+    this.popularMoviesStatus = MoviesStatus.loading,
+    this.topRatedMoviesStatus = MoviesStatus.loading,
+    this.upcomingMoviesStatus = MoviesStatus.loading,
     this.gridView = true,
     this.errorMessage = '',
+    this.genres = const [],
     this.popularMovies = const [],
-    this.currentPage = 1,
-    this.totalPages = 1,
+    this.topRatedMovies = const [],
+    this.upcomingMovies = const [],
+    this.filteredPopularMovies = const [],
+    this.filteredTopRatedMovies = const [],
+    this.filteredUpcomingMovies = const [],
+    this.currentPopularPage = 1,
+    this.currentTopRatedPage = 1,
+    this.currentUpcomingPage = 1,
+    this.totalPopularPages = 1,
+    this.totalTopRatedPages = 1,
+    this.totalUpcomingPages = 1,
   });
 
-  final MoviesStatus status;
+  final MoviesStatus popularMoviesStatus;
+  final MoviesStatus topRatedMoviesStatus;
+  final MoviesStatus upcomingMoviesStatus;
+
   final bool gridView;
   final String errorMessage;
 
+  final List<Genre> genres;
+
   final List<Movie> popularMovies;
-  final int currentPage;
-  final int totalPages;
+  final List<Movie> topRatedMovies;
+  final List<Movie> upcomingMovies;
+
+  final List<Movie> filteredPopularMovies;
+  final List<Movie> filteredTopRatedMovies;
+  final List<Movie> filteredUpcomingMovies;
+
+  final int currentPopularPage;
+  final int currentTopRatedPage;
+  final int currentUpcomingPage;
+
+  final int totalPopularPages;
+  final int totalTopRatedPages;
+  final int totalUpcomingPages;
 
   MoviesState copyWith({
-    MoviesStatus? status,
+    MoviesStatus? popularMoviesStatus,
+    MoviesStatus? topRatedMoviesStatus,
+    MoviesStatus? upcomingMoviesStatus,
+    List<Genre>? genres,
     List<Movie>? popularMovies,
+    List<Movie>? topRatedMovies,
+    List<Movie>? upcomingMovies,
+    List<Movie>? filteredPopularMovies,
+    List<Movie>? filteredTopRatedMovies,
+    List<Movie>? filteredUpcomingMovies,
     bool? gridView,
     String? errorMessage,
-    int? currentPage,
-    int? totalPages,
+    int? currentPopularPage,
+    int? currentTopRatedPage,
+    int? currentUpcomingPage,
+    int? totalPopularPages,
+    int? totalTopRatedPages,
+    int? totalUpcomingPages,
   }) {
     return MoviesState(
-      status: status ?? this.status,
+      popularMoviesStatus: popularMoviesStatus ?? this.popularMoviesStatus,
+      topRatedMoviesStatus: topRatedMoviesStatus ?? this.topRatedMoviesStatus,
+      upcomingMoviesStatus: upcomingMoviesStatus ?? this.upcomingMoviesStatus,
+      genres: genres ?? this.genres,
       popularMovies: popularMovies ?? this.popularMovies,
+      topRatedMovies: topRatedMovies ?? this.topRatedMovies,
+      upcomingMovies: upcomingMovies ?? this.upcomingMovies,
+      filteredPopularMovies: filteredPopularMovies ?? this.filteredPopularMovies,
+      filteredTopRatedMovies: filteredTopRatedMovies ?? this.filteredTopRatedMovies,
+      filteredUpcomingMovies: filteredUpcomingMovies ?? this.filteredUpcomingMovies,
       gridView: gridView ?? this.gridView,
       errorMessage: errorMessage ?? this.errorMessage,
-      currentPage: currentPage ?? this.currentPage,
-      totalPages: totalPages ?? this.totalPages,
+      currentPopularPage: currentPopularPage ?? this.currentPopularPage,
+      currentTopRatedPage: currentTopRatedPage ?? this.currentTopRatedPage,
+      currentUpcomingPage: currentUpcomingPage ?? this.currentUpcomingPage,
+      totalPopularPages: totalPopularPages ?? this.totalPopularPages,
+      totalTopRatedPages: totalTopRatedPages ?? this.totalTopRatedPages,
+      totalUpcomingPages: totalUpcomingPages ?? this.totalUpcomingPages,
     );
   }
 
   @override
-  List<Object> get props =>
-      [status, popularMovies, gridView, errorMessage, currentPage, totalPages];
+  List<Object> get props => [
+        popularMoviesStatus,
+        topRatedMoviesStatus,
+        upcomingMoviesStatus,
+        genres,
+        popularMovies,
+        topRatedMovies,
+        upcomingMovies,
+        filteredPopularMovies,
+        filteredTopRatedMovies,
+        filteredUpcomingMovies,
+        gridView,
+        errorMessage,
+        currentPopularPage,
+        totalPopularPages
+      ];
 }

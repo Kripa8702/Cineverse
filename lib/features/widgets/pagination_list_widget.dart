@@ -50,11 +50,11 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
               ? GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.7,
+                    mainAxisSpacing: 22.h,
+                    crossAxisSpacing: 16.w,
+                    childAspectRatio: 0.5,
                   ),
                   itemCount: widget.itemCount,
                   itemBuilder: widget.itemBuilder,
@@ -76,7 +76,9 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
               width: double.maxFinite,
               child: Container(
                 alignment: Alignment.center,
-                child: const CircularProgressIndicator(color: primaryColor,),
+                child: const CircularProgressIndicator(
+                  color: primaryColor,
+                ),
               ),
             ),
           ),

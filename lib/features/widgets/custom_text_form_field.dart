@@ -151,7 +151,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         hintText: widget.hintText ?? "",
         hintStyle: widget.hintStyle ??
             Styles.bodyMedium.copyWith(color: tertiaryTextColor),
-        prefixIcon: widget.prefix,
+        prefixIcon: Padding(
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 8.w,
+          ),
+          child: widget.prefix,
+        ),
         prefixIconConstraints: widget.prefixConstraints,
         suffixIcon: Padding(
           padding: EdgeInsets.only(

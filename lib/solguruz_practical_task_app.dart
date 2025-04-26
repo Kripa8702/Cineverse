@@ -57,7 +57,7 @@ class SolguruzPracticalTaskApp extends StatelessWidget {
                   scaffoldBackgroundColor: backgroundColor,
                   dividerColor: borderColor,
                   primaryColor: primaryColor,
-                  fontFamily: 'Open Sans',
+                  fontFamily: 'Montserrat',
                   useMaterial3: true,
                 ),
               ),

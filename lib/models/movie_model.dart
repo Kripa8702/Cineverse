@@ -1,3 +1,10 @@
+import 'package:solguruz_practical_task/constants/api_path.dart';
+
+///"genre_ids": [
+//                 28,
+//                 27,
+//                 53
+//             ],
 class Movie {
   Movie({
     required this.id,
@@ -5,6 +12,7 @@ class Movie {
     required this.originalTitle,
     required this.title,
     required this.overview,
+    required this.genreIds,
     required this.releaseDate,
     required this.backdropPath,
     required this.posterPath,
@@ -16,7 +24,8 @@ class Movie {
   final String originalTitle;
   final String title;
   final String overview;
-  final String releaseDate;
+  final List<int> genreIds;
+  final DateTime releaseDate;
   final String backdropPath;
   final String posterPath;
   final double voteAverage;
@@ -27,9 +36,14 @@ class Movie {
         originalTitle: json["original_title"] ?? "",
         title: json["title"] ?? "",
         overview: json["overview"] ?? "",
-        releaseDate: json["release_date"] ?? "",
-        backdropPath: json["backdrop_path"] ?? "",
-        posterPath: json["poster_path"] ?? "",
+        genreIds: json["genre_ids"] == null
+            ? []
+            : List<int>.from(json["genre_ids"].map((x) => x)),
+        releaseDate: json["release_date"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["release_date"]),
+        backdropPath: "${ApiPath.imageBaseUrl}${json["backdrop_path"] ?? ""}",
+        posterPath: "${ApiPath.imageBaseUrl}${json["poster_path"] ?? ""}",
         voteAverage: (json["vote_average"] ?? 0).toDouble(),
       );
 }
