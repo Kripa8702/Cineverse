@@ -126,9 +126,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               controller: widget.controller,
               cursorColor: primaryColor,
               autofocus: widget.autofocus!,
-              style: widget.textStyle ?? Styles.bodyMedium.copyWith(
-                color: primaryTextColor,
-              ),
+              style: widget.textStyle ??
+                  Styles.bodyMedium.copyWith(
+                    color: primaryTextColor,
+                  ),
               obscureText:
                   (widget.obscureText ?? false) ? !passwordVisible : false,
               textInputAction: widget.textInputAction,
@@ -152,25 +153,27 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             Styles.bodyMedium.copyWith(color: tertiaryTextColor),
         prefixIcon: widget.prefix,
         prefixIconConstraints: widget.prefixConstraints,
-        suffixIcon: (widget.obscureText ?? false)
-            ? Padding(
-                padding: EdgeInsets.only(
-                  right: 8.w,
-                ),
-                child: IconButton(
+        suffixIcon: Padding(
+          padding: EdgeInsets.only(
+            right: 8.w,
+          ),
+          child: (widget.obscureText ?? false)
+              ? IconButton(
                   onPressed: () {
                     setState(() {
                       passwordVisible = !passwordVisible;
                     });
                   },
                   icon: Icon(
-                        passwordVisible ? Icons.remove_red_eye_outlined : Icons.remove_red_eye,
+                    passwordVisible
+                        ? Icons.remove_red_eye_outlined
+                        : Icons.remove_red_eye,
                     size: 24.h,
                     color: tertiaryTextColor,
                   ),
-                ),
-              )
-            : (widget.suffix),
+                )
+              : (widget.suffix),
+        ),
         suffixIconConstraints: widget.suffixConstraints,
         isDense: true,
         contentPadding: widget.contentPadding ??

@@ -55,26 +55,26 @@ class BaseScreen extends StatelessWidget {
   }
 
   Widget get body => Column(
-    children: [
-      if (title != null || showBackButton != false) appBar,
-      Expanded(
-        child: SizedBox(
-          width: double.maxFinite,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: verticalPadding.h,
+        children: [
+          if (title != null || showBackButton != false) appBar,
+          Expanded(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: verticalPadding.h,
+                ),
+                child: child,
+              ),
             ),
-            child: child,
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 
   Widget get appBar => Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.w),
-    child: Row(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -93,10 +93,13 @@ class BaseScreen extends StatelessWidget {
             SizedBox(width: 8.w),
             Text(
               title ?? "",
-              style: Styles.titleMedium.copyWith(
-                  color: secondaryTextColor, fontWeight: FontWeight.bold),
+              style: Styles.titleLarge.copyWith(
+                fontSize: 32.fSize,
+                color: primaryTextColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
-  );
+      );
 }

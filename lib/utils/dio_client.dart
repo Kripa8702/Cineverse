@@ -1,6 +1,6 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:solguruz_practical_task/constants/api_path.dart';
-import 'package:solguruz_practical_task/exceptions/api_exception.dart';
-import 'package:solguruz_practical_task/models/common_response.dart';
+import 'package:solguruz_practical_task/exceptions/custom_exception.dart';
 import 'package:solguruz_practical_task/utils/colored_logs.dart';
 import 'package:dio/dio.dart';
 
@@ -20,11 +20,12 @@ class DioClient {
     _dio.options.headers = headers;
   }
 
-
   Map<String, String> get headers {
+    final authToken = dotenv.env['AUTH_TOKEN'] ?? '';
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': 'Bearer $authToken',
     };
     return headers;
   }
@@ -51,21 +52,17 @@ class DioClient {
       ColoredLogs.debug("-----> Response ${response.data}");
 
       if (response.statusCode == 200) {
-        final res = CommonResponse.fromJson(response.data);
-        if (!res.success) {
-          throw ApiException(res.message, status: response.statusCode);
-        }
-        return res.data;
+        return response.data;
       } else if (response.statusCode == 500) {
-        throw ApiException("Internal Server Error",
+        throw CustomException("Internal Server Error",
             status: response.statusCode);
       } else {
-        throw ApiException(response.data["message"],
+        throw CustomException(response.data["message"],
             status: response.statusCode);
       }
-    } on ApiException catch (e) {
+    } on CustomException catch (e) {
       ColoredLogs.error(e.message);
-      throw ApiException(e.message);
+      throw CustomException(e.message);
     } catch (e) {
       ColoredLogs.error(e.toString());
       rethrow;
@@ -106,15 +103,15 @@ class DioClient {
         /// And remove the below line
         return response.data;
       } else if (response.statusCode == 500) {
-        throw ApiException("Internal Server Error",
+        throw CustomException("Internal Server Error",
             status: response.statusCode);
       } else {
-        throw ApiException(response.data["message"],
+        throw CustomException(response.data["message"],
             status: response.statusCode);
       }
-    } on ApiException catch (e) {
+    } on CustomException catch (e) {
       ColoredLogs.error(e.message);
-      throw ApiException(e.message);
+      throw CustomException(e.message);
     } catch (e) {
       ColoredLogs.error(e.toString());
       rethrow;
@@ -131,21 +128,17 @@ class DioClient {
       ColoredLogs.debug("-----> Response ${response.data}");
 
       if (response.statusCode == 200) {
-        final res = CommonResponse.fromJson(response.data);
-        if (!res.success) {
-          throw ApiException(res.message, status: response.statusCode);
-        }
-        return res.data;
+        return response.data;
       } else if (response.statusCode == 500) {
-        throw ApiException("Internal Server Error",
+        throw CustomException("Internal Server Error",
             status: response.statusCode);
       } else {
-        throw ApiException(response.data["message"],
+        throw CustomException(response.data["message"],
             status: response.statusCode);
       }
-    } on ApiException catch (e) {
+    } on CustomException catch (e) {
       ColoredLogs.error(e.message);
-      throw ApiException(e.message);
+      throw CustomException(e.message);
     } catch (e) {
       ColoredLogs.error(e.toString());
       rethrow;
@@ -162,21 +155,17 @@ class DioClient {
       ColoredLogs.debug("-----> Response ${response.data}");
 
       if (response.statusCode == 200) {
-        final res = CommonResponse.fromJson(response.data);
-        if (!res.success) {
-          throw ApiException(res.message, status: response.statusCode);
-        }
-        return res.data;
+        return response.data;
       } else if (response.statusCode == 500) {
-        throw ApiException("Internal Server Error",
+        throw CustomException("Internal Server Error",
             status: response.statusCode);
       } else {
-        throw ApiException(response.data["message"],
+        throw CustomException(response.data["message"],
             status: response.statusCode);
       }
-    } on ApiException catch (e) {
+    } on CustomException catch (e) {
       ColoredLogs.error(e.message);
-      throw ApiException(e.message);
+      throw CustomException(e.message);
     } catch (e) {
       ColoredLogs.error(e.toString());
       rethrow;

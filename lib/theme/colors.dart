@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-const Color backgroundColor = Color(0xFFEDEDF5);
-const Color containerColor = Color(0xFFFFFFFF);
-const Color primaryColor = Color(0xFF3069fe);
+const Color backgroundColor = Color(0xFF0D0D0D);
+const Color containerColor = Color(0xFF1C1C1C);
+const Color primaryColor = Color(0xFFE50914);
 
-const Color primaryTextColor = Color(0xFF000000);
-const Color secondaryTextColor = Color(0xFF757575);
-const Color tertiaryTextColor = Color(0xFFABAAA7);
+const Color primaryTextColor = Color(0xFFE0E0E0);
+const Color secondaryTextColor = Color(0xFFA0A0A0);
+const Color tertiaryTextColor = Color(0xFF808080);
 
-const Color borderColor = Color(0xFFD0D0D0);
+const Color borderColor = Color(0xFF777777);
 
-const Color successColor = Color(0xff00C853);
-const Color errorColor = Color(0xffD32F2F);
+const Color successColor = Color(0xff3DDC84);
+const Color errorColor = Color(0xffD7263D);
+const Color warningColor = Color(0xffFF9F00);
