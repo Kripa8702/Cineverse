@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solguruz_practical_task/theme/colors.dart';
 import 'package:solguruz_practical_task/utils/size_utils.dart';
 
 class PaginationListWidget extends StatefulWidget {
@@ -6,6 +7,7 @@ class PaginationListWidget extends StatefulWidget {
   final Widget Function(BuildContext context, int index) itemBuilder;
   final Function() loadNextPage;
   final bool showLoadingIndicator;
+  final bool isGridView;
 
   const PaginationListWidget({
     super.key,
@@ -13,6 +15,7 @@ class PaginationListWidget extends StatefulWidget {
     required this.itemBuilder,
     required this.loadNextPage,
     this.showLoadingIndicator = false,
+    this.isGridView = true,
   });
 
   @override
@@ -29,9 +32,7 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
     controller.addListener(() {
       if (controller.offset >= controller.position.maxScrollExtent &&
           controller.offset <= controller.position.maxScrollExtent + 100) {
-
         widget.loadNextPage();
-
       }
     });
   }
@@ -45,15 +46,32 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
       ),
       slivers: [
         SliverToBoxAdapter(
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.itemCount,
-            itemBuilder: widget.itemBuilder,
-            separatorBuilder: (context, index) {
-              return SizedBox(height: 16.h);
-            },
-          ),
+          child: widget.isGridView
+              ? GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 22.h,
+                    crossAxisSpacing: 16.w,
+                    childAspectRatio: 120.w/240.h,
+                  ),
+                  itemCount: widget.itemCount,
+                  itemBuilder: widget.itemBuilder,
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    bottom: 16.h,
+                  ),
+                  itemCount: widget.itemCount,
+                  itemBuilder: widget.itemBuilder,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 16.h);
+                  },
+                ),
         ),
         if (widget.showLoadingIndicator) ...[
           SliverToBoxAdapter(
@@ -62,8 +80,9 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
               width: double.maxFinite,
               child: Container(
                 alignment: Alignment.center,
-                // margin: EdgeInsets.only(top: 16.h),
-                child: const CircularProgressIndicator(),
+                child: const CircularProgressIndicator(
+                  color: primaryColor,
+                ),
               ),
             ),
           ),

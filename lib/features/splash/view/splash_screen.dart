@@ -1,6 +1,8 @@
 import 'package:solguruz_practical_task/constants/assets_constants.dart';
 import 'package:solguruz_practical_task/features/splash/cubit/splash_cubit.dart';
 import 'package:solguruz_practical_task/features/widgets/custom_image_view.dart';
+import 'package:solguruz_practical_task/routing/app_routing.dart';
+import 'package:solguruz_practical_task/services/navigator_service.dart';
 import 'package:solguruz_practical_task/theme/colors.dart';
 import 'package:solguruz_practical_task/utils/size_utils.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
         BlocListener<SplashCubit, SplashState>(
           listener: (context, state) {
             if (state.status == SplashStatus.enableRouting) {
-              // route to the next screen
+              NavigatorService.go(AppRouting.moviesPath);
             }
           },
         ),

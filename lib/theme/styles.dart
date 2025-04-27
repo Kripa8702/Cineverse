@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class Styles{
   static TextStyle titleLarge = TextStyle(
-    fontSize: 20.fSize,
+    fontSize: 24.fSize,
     fontWeight: FontWeight.w600,
     color: primaryTextColor,
   );
