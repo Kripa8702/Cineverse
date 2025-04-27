@@ -139,6 +139,8 @@ class MovieCard extends StatelessWidget {
               flex: 2,
               child: CustomImageView(
                 imagePath: movie.posterPath,
+                height: 120.h,
+                width: double.infinity,
                 radius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   bottomLeft: Radius.circular(16),
