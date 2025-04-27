@@ -1,11 +1,15 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:solguruz_practical_task/constants/assets_constants.dart';
 import 'package:solguruz_practical_task/features/filter_movies/cubit/filter_movies_cubit.dart';
 import 'package:solguruz_practical_task/features/filter_movies/widgets/filter_section.dart';
 import 'package:solguruz_practical_task/features/movies/cubit/movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/widgets/movies_screen_tabs.dart';
 import 'package:solguruz_practical_task/features/widgets/base_screen.dart';
+import 'package:solguruz_practical_task/features/widgets/custom_image_view.dart';
 import 'package:solguruz_practical_task/theme/colors.dart';
+import 'package:solguruz_practical_task/theme/styles.dart';
 import 'package:solguruz_practical_task/utils/size_utils.dart';
 
 class MoviesScreen extends StatefulWidget {
@@ -19,10 +23,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<MoviesCubit>().initMovies(movieType: MovieType.popular);
-    context.read<MoviesCubit>().initMovies(movieType: MovieType.topRated);
-    context.read<MoviesCubit>().initMovies(movieType: MovieType.upcoming);
-    context.read<MoviesCubit>().initGenres();
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      if (mounted) {
+        if (result.isEmpty || result[0] == ConnectivityResult.none) {
+          context.read<MoviesCubit>().initCacheData();
+        } else {
+          context.read<MoviesCubit>().initData();
+        }
+      }
+    });
   }
 
   @override
@@ -49,34 +60,57 @@ class _MoviesScreenState extends State<MoviesScreen> {
         builder: (context, state) {
           return Column(
             mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 50.h,
               ),
-              FilterSection(genres: state.genres),
-              SizedBox(
-                height: 16.h,
-              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _listingViewButton(
-                    context,
-                    isGridView: true,
-                    chosen: state.gridView,
+                  Row(
+                    children: [
+                      CustomImageView(
+                        imagePath: appLogo,
+                        height: 38.h,
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Text(
+                        'CineVerse',
+                        style: Styles.titleLarge.copyWith(
+                          fontSize: 32.fSize
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  _listingViewButton(
-                    context,
-                    isGridView: false,
-                    chosen: !state.gridView,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _listingViewButton(
+                        context,
+                        isGridView: true,
+                        chosen: state.gridView,
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      _listingViewButton(
+                        context,
+                        isGridView: false,
+                        chosen: !state.gridView,
+                      ),
+                    ],
                   ),
                 ],
               ),
               SizedBox(
-                height: 10.h,
+                height: 16.h,
+              ),
+              FilterSection(genres: state.genres),
+              SizedBox(
+                height: 16.h,
               ),
               Flexible(
                 fit: FlexFit.tight,

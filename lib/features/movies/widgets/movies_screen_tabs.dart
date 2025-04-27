@@ -1,8 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:solguruz_practical_task/features/filter_movies/cubit/filter_movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/cubit/movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/widgets/movie_card.dart';
+import 'package:solguruz_practical_task/features/widgets/custom_button.dart';
 import 'package:solguruz_practical_task/features/widgets/error_message_widget.dart';
 import 'package:solguruz_practical_task/features/widgets/pagination_list_widget.dart';
 import 'package:solguruz_practical_task/models/genre_model.dart';
@@ -137,13 +139,14 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
                           );
                     },
                     onRetry: () {
-                      context.read<MoviesCubit>().initMovies(
+                      context.read<MoviesCubit>().getMoviesByType(
                             movieType: index == 0
                                 ? MovieType.popular
                                 : index == 1
                                     ? MovieType.topRated
                                     : MovieType.upcoming,
                           );
+                      context.read<MoviesCubit>().getGenres();
                     },
                   );
                 },
@@ -188,34 +191,57 @@ class MoviesListing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return status == MoviesStatus.loading
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: primaryColor,
-            ),
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(
+                color: primaryColor,
+              ),
+              SizedBox(
+                height: 32.h,
+              ),
+              CustomButton(
+                text: 'Retry',
+                height: 48.h,
+                width: 100.w,
+                onPressed: () {
+                  onRetry();
+                },
+              )
+            ],
           )
-        : errorMessage.isNotEmpty
+        : status == MoviesStatus.failure
             ? ErrorMessageWidget(
                 message: errorMessage,
-                isEmpty: moviesList.isEmpty,
-      onRetry: allowRetry
-                    ? onRetry
-                    : null,
+                isEmpty: false,
+                onRetry: onRetry,
               )
-            : PaginationListWidget(
-                isGridView: isGridView,
-                itemCount: moviesList.length,
-                itemBuilder: (context, index) {
-                  return MovieCard(
-                    movie: moviesList[index],
+            : moviesList.isEmpty
+                ? ErrorMessageWidget(
+                    message: errorMessage,
+                    isEmpty: true,
+                  )
+                : PaginationListWidget(
                     isGridView: isGridView,
-                    genres: genres,
+                    itemCount: moviesList.length,
+                    itemBuilder: (context, index) {
+                      return MovieCard(
+                        movie: moviesList[index],
+                        isGridView: isGridView,
+                        genres: genres,
+                      );
+                    },
+                    loadNextPage: () async {
+                      final List<ConnectivityResult> connectivityResult =
+                          await (Connectivity().checkConnectivity());
+                      if (connectivityResult[0] == ConnectivityResult.none) {
+                        return;
+                      }
+                      if (status == MoviesStatus.loadingNextPage) return;
+                      onLoadNextPage();
+                    },
+                    showLoadingIndicator:
+                        status == MoviesStatus.loadingNextPage,
                   );
-                },
-                loadNextPage: () {
-                  if (status == MoviesStatus.loadingNextPage) return;
-                  onLoadNextPage();
-                },
-                showLoadingIndicator: status == MoviesStatus.loadingNextPage,
-              );
   }
 }

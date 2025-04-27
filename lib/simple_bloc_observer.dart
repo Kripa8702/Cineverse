@@ -12,7 +12,8 @@ class SimpleBlocObserver extends BlocObserver {
 
   @override
   void onChange(BlocBase bloc, Change change) {
-    ColoredLogs.info(change.toString());
+    ColoredLogs.info("CURRENT ${change.currentState.toString()}");
+    ColoredLogs.info("NEXT ${change.nextState.toString()}");
     super.onChange(bloc, change);
   }
 }

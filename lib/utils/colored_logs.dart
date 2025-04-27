@@ -58,4 +58,18 @@ class ColoredLogs{
       debugPrint = (String? message, {int? wrapWidth}) => '';
     }
   }
+
+  static void hiveLog(String message){
+    if(kDebugMode) {
+      if(Platform.isIOS){
+        message = '🟣 $message';
+        print(message);
+        print('');
+        return;
+      }
+      print('\x1B[35m$message\x1B[0m');
+      print('');
+      debugPrint = (String? message, {int? wrapWidth}) => '';
+    }
+  }
 }

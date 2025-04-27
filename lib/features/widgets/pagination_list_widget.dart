@@ -50,6 +50,10 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
               ? GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    bottom: 16.h,
+                  ),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 22.h,

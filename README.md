@@ -1,16 +1,45 @@
-# solguruz_practical_task
+# Cineverse
+A Flutter app that displays Popular, Top Rated, and Upcoming movies with beautiful UI, pagination, and offline caching using Hive database.
 
-A new Flutter project.
+## Features
+- Fetch movies by Popular, Top Rated, Upcoming categories
+- Infinite scroll with pagination
+- Offline access to previously fetched movies (Hive caching)
+- Toggle between Grid and ListView
+- Searching and Filtering functionality
+- Smooth PageView navigation between categories
+- Responsive UI with clean code structure
 
-## Getting Started
+## Installation
 
-This project is a starting point for a Flutter application.
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
 
-A few resources to get you started if this is your first Flutter project:
+### 2. Install dependencies
+```bash
+flutter pub get
+``` 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 3. Generate Hive Type Adapters
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+``` 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 4. Run the app
+```bash
+flutter run
+``` 
+
+## Tech Stack
+- Flutter
+
+- Dio (for network requests)
+
+- Hive (for local database caching)
+
+- Cubit (for state management)
+
+- PageView + TabBar (for navigation)

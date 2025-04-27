@@ -3,11 +3,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:solguruz_practical_task/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomImageView extends StatelessWidget {
-  ///[imagePath] is required parameter for showing image
   String? imagePath;
 
   double? height;
@@ -21,8 +19,6 @@ class CustomImageView extends StatelessWidget {
   BorderRadius? radius;
   BoxBorder? border;
 
-  ///a [CustomImageView] it can be used for showing any type of images
-  /// it will shows the placeholder image if image is not found on network image
   CustomImageView({super.key,
     this.imagePath,
     this.height,
@@ -124,10 +120,9 @@ class CustomImageView extends StatelessWidget {
             ),
             errorWidget: (context, url, error) => Image.asset(
               placeHolder,
-              color: primaryColor,
               height: height,
               width: width,
-              fit: fit ?? BoxFit.contain,
+              fit: fit ?? BoxFit.cover,
             ),
           );
         case ImageType.png:

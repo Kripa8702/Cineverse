@@ -3,6 +3,7 @@ import 'package:solguruz_practical_task/exceptions/custom_exception.dart';
 import 'package:solguruz_practical_task/models/genre_model.dart';
 import 'package:solguruz_practical_task/models/movie_details_model.dart';
 import 'package:solguruz_practical_task/models/response_models/movies_response_model.dart';
+import 'package:solguruz_practical_task/services/hive_service.dart';
 import 'package:solguruz_practical_task/utils/dio_client.dart';
 
 class MoviesRepository {
@@ -23,6 +24,9 @@ class MoviesRepository {
       if (genresResponse.isEmpty) {
         throw CustomException("No genres found! Please try again later.");
       }
+
+      await HiveService.cacheGenres(genresResponse);
+
       return genresResponse;
     } on CustomException catch (e) {
       throw Exception(e.message);
@@ -40,6 +44,9 @@ class MoviesRepository {
       if (moviesResponse.results.isEmpty) {
         throw CustomException("No movies found! Please try again later.");
       }
+      // Cache movies in Hive
+      HiveService.cachePopularMovies(moviesResponse.results);
+
       return moviesResponse;
     } on CustomException catch (e) {
       throw Exception(e.message);
@@ -57,6 +64,10 @@ class MoviesRepository {
       if (moviesResponse.results.isEmpty) {
         throw CustomException("No movies found! Please try again later.");
       }
+
+      // Cache movies in Hive
+      HiveService.cacheTopRatedMovies(moviesResponse.results);
+
       return moviesResponse;
     } on CustomException catch (e) {
       throw Exception(e.message);
@@ -74,6 +85,10 @@ class MoviesRepository {
       if (moviesResponse.results.isEmpty) {
         throw CustomException("No movies found! Please try again later.");
       }
+
+      // Cache movies in Hive
+      HiveService.cacheUpcomingMovies(moviesResponse.results);
+
       return moviesResponse;
     } on CustomException catch (e) {
       throw Exception(e.message);

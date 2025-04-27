@@ -114,6 +114,7 @@ class MovieDetailsContent extends StatelessWidget {
                   _productionCompanies(
                     movieDetails?.productionCompanies ?? [],
                   ),
+                SizedBox(height: 24.h),
               ],
             ),
           ),
