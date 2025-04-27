@@ -1,10 +1,5 @@
 import 'package:solguruz_practical_task/constants/api_path.dart';
 
-///"genre_ids": [
-//                 28,
-//                 27,
-//                 53
-//             ],
 class Movie {
   Movie({
     required this.id,

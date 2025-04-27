@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:solguruz_practical_task/features/filter_movies/cubit/filter_movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/cubit/movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/widgets/movie_card.dart';
 import 'package:solguruz_practical_task/features/widgets/error_message_widget.dart';
@@ -13,7 +14,30 @@ import 'package:solguruz_practical_task/utils/size_utils.dart';
 const List<String> _tabs = ["Popular", "Top Rated", "Upcoming"];
 
 class MoviesScreenTabs extends StatefulWidget {
-  const MoviesScreenTabs({super.key});
+  final List<Movie> popularMovies;
+  final List<Movie> topRatedMovies;
+  final List<Movie> upcomingMovies;
+
+  final MoviesStatus popularMoviesStatus;
+  final MoviesStatus topRatedMoviesStatus;
+  final MoviesStatus upcomingMoviesStatus;
+
+  final List<Genre> genres;
+  final bool gridView;
+  final String errorMessage;
+
+  const MoviesScreenTabs({
+    super.key,
+    required this.popularMovies,
+    required this.topRatedMovies,
+    required this.upcomingMovies,
+    required this.popularMoviesStatus,
+    required this.topRatedMoviesStatus,
+    required this.upcomingMoviesStatus,
+    required this.genres,
+    required this.gridView,
+    required this.errorMessage,
+  });
 
   @override
   State<MoviesScreenTabs> createState() => _MoviesScreenTabsState();
@@ -31,16 +55,6 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
     _pageController = PageController();
-
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        _pageController.animateToPage(
-          _tabController.index,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
   }
 
   @override
@@ -63,6 +77,7 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
           unselectedLabelColor: secondaryTextColor,
           dividerColor: Colors.transparent,
           onTap: (index) {
+            _pageController.jumpToPage(index);
             setState(() {
               chosenTabIndex = index;
             });
@@ -71,18 +86,27 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
         SizedBox(
           height: 16.h,
         ),
-        BlocBuilder<MoviesCubit, MoviesState>(
+        BlocBuilder<FilterMoviesCubit, FilterMoviesState>(
           builder: (context, state) {
             final moviesList = chosenTabIndex == 0
-                ? state.filteredPopularMovies
+                ? intersection([
+                    state.searchedPopularMovies,
+                    state.filteredPopularMovies,
+                  ])
                 : chosenTabIndex == 1
-                    ? state.filteredTopRatedMovies
-                    : state.filteredUpcomingMovies;
+                    ? intersection([
+                        state.searchedTopRatedMovies,
+                        state.filteredTopRatedMovies,
+                      ])
+                    : intersection([
+                        state.searchedUpcomingMovies,
+                        state.filteredUpcomingMovies,
+                      ]);
             final status = chosenTabIndex == 0
-                ? state.popularMoviesStatus
+                ? widget.popularMoviesStatus
                 : chosenTabIndex == 1
-                    ? state.topRatedMoviesStatus
-                    : state.upcomingMoviesStatus;
+                    ? widget.topRatedMoviesStatus
+                    : widget.upcomingMoviesStatus;
             return Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -94,12 +118,26 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
                 itemBuilder: (context, index) {
                   return MoviesListing(
                     moviesList: moviesList,
-                    genres: state.genres,
-                    isGridView: state.gridView,
+                    genres: widget.genres,
+                    isGridView: widget.gridView,
                     status: status,
-                    errorMessage: state.errorMessage,
+                    errorMessage: widget.errorMessage.isNotEmpty
+                        ? widget.errorMessage
+                        : moviesList.isEmpty
+                            ? 'No movies found. Change your filter or search criteria.'
+                            : '',
+                    allowRetry: status == MoviesStatus.failure,
                     onLoadNextPage: () {
                       context.read<MoviesCubit>().loadNextPage(
+                            movieType: index == 0
+                                ? MovieType.popular
+                                : index == 1
+                                    ? MovieType.topRated
+                                    : MovieType.upcoming,
+                          );
+                    },
+                    onRetry: () {
+                      context.read<MoviesCubit>().initMovies(
                             movieType: index == 0
                                 ? MovieType.popular
                                 : index == 1
@@ -116,6 +154,13 @@ class _MoviesScreenTabsState extends State<MoviesScreenTabs>
       ],
     );
   }
+
+  List<T> intersection<T>(Iterable<Iterable<T>> iterables) {
+    return iterables
+        .map((e) => e.toSet())
+        .reduce((a, b) => a.intersection(b))
+        .toList();
+  }
 }
 
 class MoviesListing extends StatelessWidget {
@@ -124,7 +169,9 @@ class MoviesListing extends StatelessWidget {
   final bool isGridView;
   final MoviesStatus status;
   final String errorMessage;
+  final bool allowRetry;
   final Function() onLoadNextPage;
+  final Function() onRetry;
 
   const MoviesListing({
     super.key,
@@ -133,7 +180,9 @@ class MoviesListing extends StatelessWidget {
     required this.isGridView,
     required this.status,
     required this.errorMessage,
+    this.allowRetry = false,
     required this.onLoadNextPage,
+    required this.onRetry,
   });
 
   @override
@@ -144,19 +193,13 @@ class MoviesListing extends StatelessWidget {
               color: primaryColor,
             ),
           )
-        : status == MoviesStatus.failure
+        : errorMessage.isNotEmpty
             ? ErrorMessageWidget(
                 message: errorMessage,
                 isEmpty: moviesList.isEmpty,
-                onRetry: () {
-                  context.read<MoviesCubit>().initMovies(
-                        movieType: isGridView
-                            ? MovieType.popular
-                            : isGridView
-                                ? MovieType.topRated
-                                : MovieType.upcoming,
-                      );
-                },
+      onRetry: allowRetry
+                    ? onRetry
+                    : null,
               )
             : PaginationListWidget(
                 isGridView: isGridView,

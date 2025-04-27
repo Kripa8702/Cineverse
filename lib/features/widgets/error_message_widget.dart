@@ -49,9 +49,7 @@ class ErrorMessageWidget extends StatelessWidget {
           ),
           SizedBox(height: 5.h),
           Text(
-            isEmpty
-                ? "No data available."
-                : message ?? 'Something went wrong. Please try again later.',
+            message ?? 'Something went wrong. Please try again later.',
             style: Styles.bodyMedium.copyWith(
               fontSize: 14.fSize,
             ),
@@ -60,41 +58,42 @@ class ErrorMessageWidget extends StatelessWidget {
           SizedBox(
             height: 20.h,
           ),
-          isEmpty
-              ? IconButton(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: warningColor,
-                    size: 30.h,
-                  ),
-                  onPressed: () {
-                    if (onRetry != null) {
-                      onRetry!();
-                    }
-                  },
-                )
-              : ElevatedButton(
-                  onPressed: () {
-                    if (onRetry != null) {
-                      onRetry!();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+          if (onRetry != null)
+            isEmpty
+                ? IconButton(
+                    icon: Icon(
+                      Icons.refresh,
+                      color: warningColor,
+                      size: 30.h,
                     ),
-                    minimumSize: Size(200.w, 50.h),
-                  ),
-                  child: Text(
-                    'Try Again',
-                    style: Styles.titleSmall.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    onPressed: () {
+                      if (onRetry != null) {
+                        onRetry!();
+                      }
+                    },
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      if (onRetry != null) {
+                        onRetry!();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      minimumSize: Size(200.w, 50.h),
                     ),
-                  ),
-                )
+                    child: Text(
+                      'Try Again',
+                      style: Styles.titleSmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
         ],
       ),
     );

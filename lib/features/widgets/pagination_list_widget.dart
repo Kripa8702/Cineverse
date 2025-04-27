@@ -54,7 +54,7 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 22.h,
                     crossAxisSpacing: 16.w,
-                    childAspectRatio: 0.5,
+                    childAspectRatio: 120.w/240.h,
                   ),
                   itemCount: widget.itemCount,
                   itemBuilder: widget.itemBuilder,
@@ -62,6 +62,10 @@ class _PaginationListWidgetState extends State<PaginationListWidget> {
               : ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    bottom: 16.h,
+                  ),
                   itemCount: widget.itemCount,
                   itemBuilder: widget.itemBuilder,
                   separatorBuilder: (context, index) {

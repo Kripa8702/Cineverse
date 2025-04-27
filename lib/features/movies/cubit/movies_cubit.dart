@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:solguruz_practical_task/exceptions/custom_exception.dart';
 import 'package:solguruz_practical_task/features/movies/repository/movies_repository.dart';
 import 'package:solguruz_practical_task/models/genre_model.dart';
@@ -8,14 +8,14 @@ import 'package:solguruz_practical_task/models/movie_model.dart';
 part 'movies_state.dart';
 
 class MoviesCubit extends Cubit<MoviesState> {
-  MoviesCubit({required this.moviesRepository}) : super(const MoviesState());
+  MoviesCubit({required this.repository}) : super(const MoviesState());
 
-  MoviesRepository moviesRepository;
+  MoviesRepository repository;
 
   /// API call Methods
   Future<void> initGenres() async {
     try {
-      final genresResponse = await moviesRepository.getAllGenres();
+      final genresResponse = await repository.getAllGenres();
       emit(state.copyWith(
         genres: genresResponse,
       ));
@@ -27,10 +27,15 @@ class MoviesCubit extends Cubit<MoviesState> {
   }
 
   Future<void> initMovies({required MovieType movieType}) async {
-    emit(state.copyWith(popularMoviesStatus: MoviesStatus.loading));
+    emit(state.copyWith(
+      popularMoviesStatus: MoviesStatus.loading,
+      topRatedMoviesStatus: MoviesStatus.loading,
+      upcomingMoviesStatus: MoviesStatus.loading,
+      selectedGenres: [],
+    ));
     try {
       if (movieType == MovieType.popular) {
-        final moviesResponse = await moviesRepository.getPopularMovies(page: 1);
+        final moviesResponse = await repository.getPopularMovies(page: 1);
 
         emit(state.copyWith(
           popularMoviesStatus: MoviesStatus.success,
@@ -41,7 +46,7 @@ class MoviesCubit extends Cubit<MoviesState> {
         ));
       } else if (movieType == MovieType.topRated) {
         final moviesResponse =
-            await moviesRepository.getTopRatedMovies(page: 1);
+            await repository.getTopRatedMovies(page: 1);
 
         emit(state.copyWith(
           topRatedMoviesStatus: MoviesStatus.success,
@@ -52,7 +57,7 @@ class MoviesCubit extends Cubit<MoviesState> {
         ));
       } else if (movieType == MovieType.upcoming) {
         final moviesResponse =
-            await moviesRepository.getUpcomingMovies(page: 1);
+            await repository.getUpcomingMovies(page: 1);
 
         emit(state.copyWith(
           upcomingMoviesStatus: MoviesStatus.success,
@@ -106,7 +111,7 @@ class MoviesCubit extends Cubit<MoviesState> {
 
     try {
       if (movieType == MovieType.popular) {
-        final moviesResponse = await moviesRepository.getPopularMovies(
+        final moviesResponse = await repository.getPopularMovies(
             page: currentState.currentPopularPage + 1);
 
         emit(currentState.copyWith(
@@ -116,14 +121,14 @@ class MoviesCubit extends Cubit<MoviesState> {
             ...moviesResponse.results
           ],
           filteredPopularMovies: [
-            ...currentState.filteredPopularMovies,
+            ...currentState.popularMovies,
             ...moviesResponse.results
           ],
           currentPopularPage: currentState.currentPopularPage + 1,
           totalPopularPages: moviesResponse.totalPages,
         ));
       } else if (movieType == MovieType.topRated) {
-        final moviesResponse = await moviesRepository.getTopRatedMovies(
+        final moviesResponse = await repository.getTopRatedMovies(
             page: currentState.currentTopRatedPage + 1);
 
         emit(currentState.copyWith(
@@ -133,14 +138,14 @@ class MoviesCubit extends Cubit<MoviesState> {
             ...moviesResponse.results
           ],
           filteredTopRatedMovies: [
-            ...currentState.filteredTopRatedMovies,
+            ...currentState.topRatedMovies,
             ...moviesResponse.results
           ],
           currentTopRatedPage: currentState.currentTopRatedPage + 1,
           totalTopRatedPages: moviesResponse.totalPages,
         ));
       } else if (movieType == MovieType.upcoming) {
-        final moviesResponse = await moviesRepository.getUpcomingMovies(
+        final moviesResponse = await repository.getUpcomingMovies(
             page: currentState.currentUpcomingPage + 1);
 
         emit(currentState.copyWith(
@@ -150,7 +155,7 @@ class MoviesCubit extends Cubit<MoviesState> {
             ...moviesResponse.results
           ],
           filteredUpcomingMovies: [
-            ...currentState.filteredUpcomingMovies,
+            ...currentState.upcomingMovies,
             ...moviesResponse.results
           ],
           currentUpcomingPage: currentState.currentUpcomingPage + 1,
@@ -167,50 +172,7 @@ class MoviesCubit extends Cubit<MoviesState> {
     }
   }
 
-  void searchMovies({required String query}) {
-    if (query.isEmpty) {
-      emit(state.copyWith(
-        filteredPopularMovies: state.popularMovies,
-        filteredTopRatedMovies: state.topRatedMovies,
-        filteredUpcomingMovies: state.upcomingMovies,
-        popularMoviesStatus: MoviesStatus.success,
-        topRatedMoviesStatus: MoviesStatus.success,
-        upcomingMoviesStatus: MoviesStatus.success,
-      ));
-      return;
-    }
-    final popularMovies = state.popularMovies
-        .where(
-            (movie) => movie.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    final topRatedMovies = state.topRatedMovies
-        .where(
-            (movie) => movie.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    final upcomingMovies = state.upcomingMovies
-        .where(
-            (movie) => movie.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    emit(state.copyWith(
-      filteredPopularMovies: popularMovies,
-      filteredTopRatedMovies: topRatedMovies,
-      filteredUpcomingMovies: upcomingMovies,
-      popularMoviesStatus:
-          popularMovies.isEmpty ? MoviesStatus.failure : MoviesStatus.success,
-      topRatedMoviesStatus:
-          topRatedMovies.isEmpty ? MoviesStatus.failure : MoviesStatus.success,
-      upcomingMoviesStatus:
-          upcomingMovies.isEmpty ? MoviesStatus.failure : MoviesStatus.success,
-      errorMessage: popularMovies.isEmpty ||
-              topRatedMovies.isEmpty ||
-              upcomingMovies.isEmpty
-          ? "No movies found!"
-          : "",
-    ));
-  }
-
-  /// State modification Methods
+  /// State modification and manipulation Methods
   void toggleGridView(bool isGridView) {
     emit(state.copyWith(gridView: isGridView));
   }

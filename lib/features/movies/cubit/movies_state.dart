@@ -9,15 +9,13 @@ class MoviesState extends Equatable {
     this.popularMoviesStatus = MoviesStatus.loading,
     this.topRatedMoviesStatus = MoviesStatus.loading,
     this.upcomingMoviesStatus = MoviesStatus.loading,
+    this.fetchMovieDetailsStatus = MoviesStatus.loading,
     this.gridView = true,
     this.errorMessage = '',
     this.genres = const [],
     this.popularMovies = const [],
     this.topRatedMovies = const [],
     this.upcomingMovies = const [],
-    this.filteredPopularMovies = const [],
-    this.filteredTopRatedMovies = const [],
-    this.filteredUpcomingMovies = const [],
     this.currentPopularPage = 1,
     this.currentTopRatedPage = 1,
     this.currentUpcomingPage = 1,
@@ -29,6 +27,7 @@ class MoviesState extends Equatable {
   final MoviesStatus popularMoviesStatus;
   final MoviesStatus topRatedMoviesStatus;
   final MoviesStatus upcomingMoviesStatus;
+  final MoviesStatus fetchMovieDetailsStatus;
 
   final bool gridView;
   final String errorMessage;
@@ -38,10 +37,6 @@ class MoviesState extends Equatable {
   final List<Movie> popularMovies;
   final List<Movie> topRatedMovies;
   final List<Movie> upcomingMovies;
-
-  final List<Movie> filteredPopularMovies;
-  final List<Movie> filteredTopRatedMovies;
-  final List<Movie> filteredUpcomingMovies;
 
   final int currentPopularPage;
   final int currentTopRatedPage;
@@ -55,7 +50,9 @@ class MoviesState extends Equatable {
     MoviesStatus? popularMoviesStatus,
     MoviesStatus? topRatedMoviesStatus,
     MoviesStatus? upcomingMoviesStatus,
+    MoviesStatus? fetchMovieDetailsStatus,
     List<Genre>? genres,
+    List<Genre>? selectedGenres,
     List<Movie>? popularMovies,
     List<Movie>? topRatedMovies,
     List<Movie>? upcomingMovies,
@@ -75,13 +72,12 @@ class MoviesState extends Equatable {
       popularMoviesStatus: popularMoviesStatus ?? this.popularMoviesStatus,
       topRatedMoviesStatus: topRatedMoviesStatus ?? this.topRatedMoviesStatus,
       upcomingMoviesStatus: upcomingMoviesStatus ?? this.upcomingMoviesStatus,
+      fetchMovieDetailsStatus:
+          fetchMovieDetailsStatus ?? this.fetchMovieDetailsStatus,
       genres: genres ?? this.genres,
       popularMovies: popularMovies ?? this.popularMovies,
       topRatedMovies: topRatedMovies ?? this.topRatedMovies,
       upcomingMovies: upcomingMovies ?? this.upcomingMovies,
-      filteredPopularMovies: filteredPopularMovies ?? this.filteredPopularMovies,
-      filteredTopRatedMovies: filteredTopRatedMovies ?? this.filteredTopRatedMovies,
-      filteredUpcomingMovies: filteredUpcomingMovies ?? this.filteredUpcomingMovies,
       gridView: gridView ?? this.gridView,
       errorMessage: errorMessage ?? this.errorMessage,
       currentPopularPage: currentPopularPage ?? this.currentPopularPage,
@@ -98,13 +94,11 @@ class MoviesState extends Equatable {
         popularMoviesStatus,
         topRatedMoviesStatus,
         upcomingMoviesStatus,
+        fetchMovieDetailsStatus,
         genres,
         popularMovies,
         topRatedMovies,
         upcomingMovies,
-        filteredPopularMovies,
-        filteredTopRatedMovies,
-        filteredUpcomingMovies,
         gridView,
         errorMessage,
         currentPopularPage,

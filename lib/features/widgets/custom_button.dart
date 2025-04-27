@@ -75,7 +75,7 @@ class CustomButton extends StatelessWidget {
                 : Text(
                     text,
                     style: buttonTextStyle ??
-                        Styles.labelLarge.copyWith(color: backgroundColor),
+                        Styles.labelLarge.copyWith(color: Colors.white),
                   ),
       ),
     );

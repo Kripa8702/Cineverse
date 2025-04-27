@@ -1,3 +1,5 @@
+import 'package:solguruz_practical_task/features/filter_movies/cubit/filter_movies_cubit.dart';
+import 'package:solguruz_practical_task/features/movie_details/cubit/movie_details_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/cubit/movies_cubit.dart';
 import 'package:solguruz_practical_task/features/movies/repository/movies_repository.dart';
 import 'package:solguruz_practical_task/features/splash/cubit/splash_cubit.dart';
@@ -45,7 +47,15 @@ class SolguruzPracticalTaskApp extends StatelessWidget {
                 ),
                 BlocProvider<MoviesCubit>(
                   create: (context) => MoviesCubit(
-                      moviesRepository: context.read<MoviesRepository>()),
+                      repository: context.read<MoviesRepository>()),
+                ),
+                BlocProvider<FilterMoviesCubit>(
+                  create: (context) => FilterMoviesCubit(),
+                ),
+                BlocProvider<MovieDetailsCubit>(
+                  create: (context) => MovieDetailsCubit(
+                    repository: context.read<MoviesRepository>(),
+                  ),
                 )
               ],
               child: MaterialApp.router(
