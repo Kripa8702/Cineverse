@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:solguruz_practical_task/features/movies/cubit/movies_cubit.dart';
 import 'package:solguruz_practical_task/features/widgets/custom_button.dart';
 import 'package:solguruz_practical_task/models/genre_model.dart';
 import 'package:solguruz_practical_task/theme/colors.dart';
@@ -10,11 +12,14 @@ class GenreFilterBottomSheet extends StatefulWidget {
   final List<Genre> selectedGenres;
   final Function(List<Genre> genres) onFiltersApplied;
   final Function() onFiltersCleared;
-  const GenreFilterBottomSheet({super.key,
+
+  const GenreFilterBottomSheet({
+    super.key,
     required this.genres,
     required this.selectedGenres,
     required this.onFiltersApplied,
-    required this.onFiltersCleared,});
+    required this.onFiltersCleared,
+  });
 
   @override
   State<GenreFilterBottomSheet> createState() => _GenreFilterBottomSheetState();
@@ -28,6 +33,7 @@ class _GenreFilterBottomSheetState extends State<GenreFilterBottomSheet> {
     super.initState();
     selectedGenres = widget.selectedGenres;
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,44 +48,72 @@ class _GenreFilterBottomSheetState extends State<GenreFilterBottomSheet> {
       child: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.genres.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      if (selectedGenres.contains(widget.genres[index])) {
-                        selectedGenres =
-                            selectedGenres
-                                .where((genre) => genre != widget.genres[index])
-                                .toList();
-                      } else {
-                        selectedGenres =
-                            [...selectedGenres, widget.genres[index]];
-                      }
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    margin: EdgeInsets.only(bottom: 8.h),
-                    decoration: BoxDecoration(
-                      color: selectedGenres.contains(widget.genres[index])
-                          ? primaryColor
-                          : containerColor,
-                      borderRadius: BorderRadius.circular(8.h),
-                    ),
-                    child: Text(
-                      widget.genres[index].name,
-                      style: Styles.labelMedium.copyWith(
-                        color: selectedGenres.contains(widget.genres[index])
-                            ? Colors.white
-                            : secondaryTextColor,
+            child: widget.genres.isEmpty
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No genres available!",
+                        style: Styles.labelMedium.copyWith(
+                          color: secondaryTextColor
+                        ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 8.h,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          color: secondaryTextColor,
+                          size: 30.h,
+                        ),
+                        onPressed: () {
+                          context.read<MoviesCubit>().getGenres();
+                        },
+                      )
+                    ],
+                  )
+                : ListView.builder(
+                    itemCount: widget.genres.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (selectedGenres.contains(widget.genres[index])) {
+                              selectedGenres = selectedGenres
+                                  .where(
+                                      (genre) => genre != widget.genres[index])
+                                  .toList();
+                            } else {
+                              selectedGenres = [
+                                ...selectedGenres,
+                                widget.genres[index]
+                              ];
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16.w),
+                          margin: EdgeInsets.only(bottom: 8.h),
+                          decoration: BoxDecoration(
+                            color: selectedGenres.contains(widget.genres[index])
+                                ? primaryColor
+                                : containerColor,
+                            borderRadius: BorderRadius.circular(8.h),
+                          ),
+                          child: Text(
+                            widget.genres[index].name,
+                            style: Styles.labelMedium.copyWith(
+                              color:
+                                  selectedGenres.contains(widget.genres[index])
+                                      ? Colors.white
+                                      : secondaryTextColor,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
           SizedBox(
             height: 16.h,
@@ -120,6 +154,5 @@ class _GenreFilterBottomSheetState extends State<GenreFilterBottomSheet> {
         ],
       ),
     );
-
   }
 }

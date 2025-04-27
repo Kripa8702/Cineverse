@@ -10,11 +10,6 @@ class DioClient {
   DioClient() {
     _dio = Dio(BaseOptions(
       baseUrl: ApiPath.baseUrl,
-      connectTimeout: const Duration(milliseconds: 5000),
-      receiveTimeout: const Duration(milliseconds: 5000),
-      validateStatus: (int? status) {
-        return status != null;
-      },
     ));
 
     _dio.options.headers = headers;
@@ -48,7 +43,7 @@ class DioClient {
         ),
       );
 
-      ColoredLogs.debug("\n-----> Status Code: ${response.statusCode}");
+      ColoredLogs.debug("\n-----> $endpoint Status Code: ${response.statusCode}");
       ColoredLogs.debug("-----> Response ${response.data}");
 
       if (response.statusCode == 200) {
@@ -88,7 +83,7 @@ class DioClient {
         ),
       );
 
-      ColoredLogs.debug("\n-----> Status Code: ${response.statusCode}");
+      ColoredLogs.debug("\n-----> $endpoint Status Code: ${response.statusCode}");
       ColoredLogs.debug("-----> Response ${response.data}");
 
       if (response.statusCode == 200) {

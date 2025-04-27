@@ -49,12 +49,18 @@ class FilterMoviesState extends Equatable {
       allPopularMovies: allPopularMovies ?? this.allPopularMovies,
       allTopRatedMovies: allTopRatedMovies ?? this.allTopRatedMovies,
       allUpcomingMovies: allUpcomingMovies ?? this.allUpcomingMovies,
-      searchedPopularMovies: searchedPopularMovies ?? this.searchedPopularMovies,
-      searchedTopRatedMovies: searchedTopRatedMovies ?? this.searchedTopRatedMovies,
-      searchedUpcomingMovies: searchedUpcomingMovies ?? this.searchedUpcomingMovies,
-      filteredPopularMovies: filteredPopularMovies ?? this.filteredPopularMovies,
-      filteredTopRatedMovies: filteredTopRatedMovies ?? this.filteredTopRatedMovies,
-      filteredUpcomingMovies: filteredUpcomingMovies ?? this.filteredUpcomingMovies,
+      searchedPopularMovies:
+          searchedPopularMovies ?? this.searchedPopularMovies,
+      searchedTopRatedMovies:
+          searchedTopRatedMovies ?? this.searchedTopRatedMovies,
+      searchedUpcomingMovies:
+          searchedUpcomingMovies ?? this.searchedUpcomingMovies,
+      filteredPopularMovies:
+          filteredPopularMovies ?? this.filteredPopularMovies,
+      filteredTopRatedMovies:
+          filteredTopRatedMovies ?? this.filteredTopRatedMovies,
+      filteredUpcomingMovies:
+          filteredUpcomingMovies ?? this.filteredUpcomingMovies,
     );
   }
 
@@ -62,6 +68,9 @@ class FilterMoviesState extends Equatable {
   List<Object> get props => [
         selectedGenres,
         searchText,
+        allPopularMovies,
+        allTopRatedMovies,
+        allUpcomingMovies,
         searchedPopularMovies,
         searchedTopRatedMovies,
         searchedUpcomingMovies,
@@ -69,5 +78,4 @@ class FilterMoviesState extends Equatable {
         filteredTopRatedMovies,
         filteredUpcomingMovies,
       ];
-
 }

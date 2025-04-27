@@ -4,6 +4,7 @@ import 'package:solguruz_practical_task/exceptions/custom_exception.dart';
 import 'package:solguruz_practical_task/features/movies/repository/movies_repository.dart';
 import 'package:solguruz_practical_task/models/genre_model.dart';
 import 'package:solguruz_practical_task/models/movie_model.dart';
+import 'package:solguruz_practical_task/services/hive_service.dart';
 
 part 'movies_state.dart';
 
@@ -13,7 +14,7 @@ class MoviesCubit extends Cubit<MoviesState> {
   MoviesRepository repository;
 
   /// API call Methods
-  Future<void> initGenres() async {
+  Future<void> getGenres() async {
     try {
       final genresResponse = await repository.getAllGenres();
       emit(state.copyWith(
@@ -26,11 +27,14 @@ class MoviesCubit extends Cubit<MoviesState> {
     }
   }
 
-  Future<void> initMovies({required MovieType movieType}) async {
+  Future<void> getMoviesByType({required MovieType movieType}) async {
     emit(state.copyWith(
-      popularMoviesStatus: MoviesStatus.loading,
-      topRatedMoviesStatus: MoviesStatus.loading,
-      upcomingMoviesStatus: MoviesStatus.loading,
+      popularMoviesStatus:
+          movieType == MovieType.popular ? MoviesStatus.loading : null,
+      topRatedMoviesStatus:
+          movieType == MovieType.topRated ? MoviesStatus.loading : null,
+      upcomingMoviesStatus:
+          movieType == MovieType.upcoming ? MoviesStatus.loading : null,
       selectedGenres: [],
     ));
     try {
@@ -40,41 +44,42 @@ class MoviesCubit extends Cubit<MoviesState> {
         emit(state.copyWith(
           popularMoviesStatus: MoviesStatus.success,
           popularMovies: moviesResponse.results,
-          filteredPopularMovies: moviesResponse.results,
           currentPopularPage: 1,
           totalPopularPages: moviesResponse.totalPages,
         ));
       } else if (movieType == MovieType.topRated) {
-        final moviesResponse =
-            await repository.getTopRatedMovies(page: 1);
+        final moviesResponse = await repository.getTopRatedMovies(page: 1);
 
         emit(state.copyWith(
           topRatedMoviesStatus: MoviesStatus.success,
           topRatedMovies: moviesResponse.results,
-          filteredTopRatedMovies: moviesResponse.results,
           currentTopRatedPage: 1,
           totalTopRatedPages: moviesResponse.totalPages,
         ));
       } else if (movieType == MovieType.upcoming) {
-        final moviesResponse =
-            await repository.getUpcomingMovies(page: 1);
+        final moviesResponse = await repository.getUpcomingMovies(page: 1);
 
         emit(state.copyWith(
           upcomingMoviesStatus: MoviesStatus.success,
           upcomingMovies: moviesResponse.results,
-          filteredUpcomingMovies: moviesResponse.results,
           currentUpcomingPage: 1,
           totalUpcomingPages: moviesResponse.totalPages,
         ));
       }
     } on CustomException catch (e) {
       emit(state.copyWith(
-        popularMoviesStatus: MoviesStatus.failure,
         topRatedMoviesStatus: MoviesStatus.failure,
         upcomingMoviesStatus: MoviesStatus.failure,
         errorMessage: e.message,
       ));
     }
+  }
+
+  Future<void> initData() async {
+    await getMoviesByType(movieType: MovieType.popular);
+    await getMoviesByType(movieType: MovieType.topRated);
+    await getMoviesByType(movieType: MovieType.upcoming);
+    await getGenres();
   }
 
   Future<void> loadNextPage({required MovieType movieType}) async {
@@ -120,10 +125,6 @@ class MoviesCubit extends Cubit<MoviesState> {
             ...currentState.popularMovies,
             ...moviesResponse.results
           ],
-          filteredPopularMovies: [
-            ...currentState.popularMovies,
-            ...moviesResponse.results
-          ],
           currentPopularPage: currentState.currentPopularPage + 1,
           totalPopularPages: moviesResponse.totalPages,
         ));
@@ -137,10 +138,6 @@ class MoviesCubit extends Cubit<MoviesState> {
             ...currentState.topRatedMovies,
             ...moviesResponse.results
           ],
-          filteredTopRatedMovies: [
-            ...currentState.topRatedMovies,
-            ...moviesResponse.results
-          ],
           currentTopRatedPage: currentState.currentTopRatedPage + 1,
           totalTopRatedPages: moviesResponse.totalPages,
         ));
@@ -151,10 +148,6 @@ class MoviesCubit extends Cubit<MoviesState> {
         emit(currentState.copyWith(
           upcomingMoviesStatus: MoviesStatus.success,
           upcomingMovies: [
-            ...currentState.upcomingMovies,
-            ...moviesResponse.results
-          ],
-          filteredUpcomingMovies: [
             ...currentState.upcomingMovies,
             ...moviesResponse.results
           ],
@@ -175,5 +168,32 @@ class MoviesCubit extends Cubit<MoviesState> {
   /// State modification and manipulation Methods
   void toggleGridView(bool isGridView) {
     emit(state.copyWith(gridView: isGridView));
+  }
+
+  Future<void> getMoviesFromCache() async {
+    final cachedPopularMovies = await HiveService.getCachedPopularMovies();
+    final cachedTopRatedMovies = await HiveService.getCachedTopRatedMovies();
+    final cachedUpcomingMovies = await HiveService.getCachedUpcomingMovies();
+
+    emit(state.copyWith(
+      popularMovies: cachedPopularMovies,
+      topRatedMovies: cachedTopRatedMovies,
+      upcomingMovies: cachedUpcomingMovies,
+      popularMoviesStatus: MoviesStatus.success,
+      topRatedMoviesStatus: MoviesStatus.success,
+      upcomingMoviesStatus: MoviesStatus.success,
+
+    ));
+  }
+
+  Future<void> getGenresFromCache() async {
+    final cachedGenres = await HiveService.getCachedGenres();
+
+    emit(state.copyWith(genres: cachedGenres));
+  }
+
+  Future<void> initCacheData() async {
+    await getMoviesFromCache();
+    await getGenresFromCache();
   }
 }
